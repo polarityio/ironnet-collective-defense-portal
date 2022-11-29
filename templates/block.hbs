@@ -1,0 +1,61 @@
+<div class="teams-integration">
+  {{#if (and details.availableChannelsToMessage.length block.userOptions.allowSendingMessages) }}
+    <div class='messaging'>
+      <div class='channel-select-container'>
+        <div class='channel-select-title'>
+          <select
+            class='channel-dropdown'
+            onchange={{action (mut 'selectedChannelName') value='target.value'}}
+          >
+            {{#each details.availableChannelsToMessage as |channelName|}}
+              <option
+                class='channel-option'
+                value={{channelName}}
+                selected={{eq channelName selectedChannelName}}
+              >{{channelName}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+      {{textarea
+        class='message-box'
+        change=(action (mut messageValue) value='target.value')
+        rows=2
+        placeholder=(concat 'Message for ' block.entity.value)
+        value=messageValue
+        disabled=sendingMessage
+      }}
+      <div class='send-button-and-messages'>
+        <button
+          {{action 'sendMessage'}}
+          class='p-btn btn btn-light send-button no-style-button
+            {{if (or sendingMessage (not messageValue)) "disabled"}}'
+          disabled={{or sendingMessage (not messageValue)}}
+        >
+          {{#if sendingMessage}}
+            {{fa-icon
+              'spinner-third'
+              class='icon loading-icon'
+              size='md'
+              fixedWidth=true
+              spin=true
+              alt='Send Message'
+            }}
+          {{else}}
+            {{fa-icon icon='paper-plane' class='icon send-icon' size='md' fixedWidth=true}}
+          {{/if}}
+        </button>
+        {{#if messagingToast}}
+          <div class='alert alert-info'>
+            {{messagingToast}}
+          </div>
+        {{/if}}
+        {{#if errorMessagingToast}}
+          <div class='alert alert-danger'>
+            {{errorMessagingToast}}
+          </div>
+        {{/if}}
+      </div>
+    </div>
+  {{/if}}
+</div>
