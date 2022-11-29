@@ -1,18 +1,5 @@
-const { splitCommaSeparatedUserOption } = require('./utils');
-const getTeamIdWithName = require('./getTeamIdWithName');
+const { identity } = require('lodash/fp');
 
-const parseUserOptionLists = async (options) => {
-  const parsedChannelNames = splitCommaSeparatedUserOption('channelNames', options);
-
-  const teamId = await getTeamIdWithName(options);
-
-  const updatedOptions = {
-    ...options,
-    parsedChannelNames,
-    teamId
-  };
-
-  return updatedOptions;
-};
+const parseUserOptionLists = identity
 
 module.exports = parseUserOptionLists;
