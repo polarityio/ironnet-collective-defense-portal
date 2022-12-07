@@ -1,15 +1,13 @@
 {
   "main": "./integration.js",
-  "name": "microsoft-teams",
-  "version": "3.0.asdf-beta",
+  "name": "ironnet-collective-defense-portal",
+  "version": "3.0.0-beta",
   "private": true,
   "license": "MIT",
   "author": "Polarity",
   "dependencies": {
-    "@azure/msal-node": "^1.14.1",
     "async": "^3.2.4",
     "lodash": "^4.17.21",
-    "node-cache": "^5.1.2",
     "postman-request": "^2.88.1-postman.31"
   }
 }

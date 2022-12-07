@@ -1,17 +1,16 @@
 const fs = require('fs');
 
 const request = require('postman-request');
-const { get, identity } = require('lodash/fp');
+const { get } = require('lodash/fp');
 
 const { ERROR_MESSAGES } = require('../../src/constants');
 const authenticateRequest = require('./authenticateRequest');
-const handleRequestErrorsForServices = require('./handleRequestErrorsForServices');
+const handleRequestPagination = require('./handleRequestPagination');
+const { getLogger } = require('../logging');
 
 const SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES = [200];
 
 const _configFieldIsValid = (field) => typeof field === 'string' && field.length > 0;
-
-//**TODO: add pagination to request lib */
 
 const createRequestWithDefaults = () => {
   const {
@@ -25,7 +24,6 @@ const createRequestWithDefaults = () => {
     ...(_configFieldIsValid(passphrase) && { passphrase }),
     ...(_configFieldIsValid(proxy) && { proxy }),
     ...(typeof rejectUnauthorized === 'boolean' && { rejectUnauthorized }),
-    rejectUnauthorized: false,
     json: true
   };
 
@@ -73,14 +71,14 @@ const createRequestWithDefaults = () => {
   };
 
   const checkForStatusError = ({ statusCode, body }, requestOptions) => {
-    const { Logger } = require('../../integration');
+    const Logger = getLogger('../../integration');
 
     const requestOptionsWithoutSensitiveData = {
       ...requestOptions,
       options: '{...}',
       headers: {
-        ...requestOptions.headers
-        // Authorization: 'Bearer ****************'
+        ...requestOptions.headers,
+        'x-api-key': '****************'
       }
     };
 
@@ -95,9 +93,8 @@ const createRequestWithDefaults = () => {
     );
 
     const roundedStatus = Math.round(statusCode / 100) * 100;
-    const statusCodeNotSuccessful = !SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES.includes(
-      roundedStatus
-    );
+    const statusCodeNotSuccessful =
+      !SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES.includes(roundedStatus);
 
     if (statusCodeNotSuccessful) {
       const requestError = Error('Request Error');
@@ -109,10 +106,11 @@ const createRequestWithDefaults = () => {
     }
   };
 
+  const requestWithAuth = requestWithDefaultsBuilder(authenticateRequest);
+
   const requestDefaultsWithInterceptors = requestWithDefaultsBuilder(
     authenticateRequest,
-    identity,
-    handleRequestErrorsForServices(requestWithDefaultsBuilder)
+    handleRequestPagination(requestWithAuth)
   );
 
   return requestDefaultsWithInterceptors;

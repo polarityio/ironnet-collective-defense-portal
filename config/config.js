@@ -291,5 +291,18 @@ module.exports = {
       userCanEdit: true,
       adminOnly: false
     }
+    //TODO: Consider adding a days/months back number option.
+    /** The Query filter for the graphql query looks like this:
+     * would likely use moment to create timestamps similar to
+     * https://github.com/polarityio/microsoft-sentinel/blob/571d3864243ddc8c724db8ab7339e869b72f9db4/src/queries/utils.js#L23
+     * OR
+     * https://github.com/polarityio/hackerone/blob/52898af6abc93fe79d3ea019cd113a99928d2bd3/src/dataTransformations.js#L58
+     *  {
+          alertCreated: {
+            start: "2022-11-16T19:05:43.112Z"
+            end: "2022-11-23T19:05:43.112Z"
+          }
+        }
+     */
   ]
 };

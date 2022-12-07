@@ -212,13 +212,6 @@ const allCombinations = (
     arrayToCombine
   );
 
-const buildLogger = (logger, ...args) =>
-  logger[
-    ['trace', 'debug', 'info', 'warn', 'error', 'fatal'].includes(last(args))
-      ? last(args)
-      : 'info'
-  ](slice(0, -1, args));
-
 module.exports = {
   getKeys,
   groupEntities,
@@ -239,6 +232,5 @@ module.exports = {
   encodeBase64,
   decodeBase64,
   standardizeEntityTypes,
-  allCombinations,
-  buildLogger
+  allCombinations
 };
