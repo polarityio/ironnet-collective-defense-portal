@@ -1,61 +1,13 @@
-<div class="teams-integration">
-  {{#if (and details.availableChannelsToMessage.length block.userOptions.allowSendingMessages) }}
-    <div class='messaging'>
-      <div class='channel-select-container'>
-        <div class='channel-select-title'>
-          <select
-            class='channel-dropdown'
-            onchange={{action (mut 'selectedChannelName') value='target.value'}}
-          >
-            {{#each details.availableChannelsToMessage as |channelName|}}
-              <option
-                class='channel-option'
-                value={{channelName}}
-                selected={{eq channelName selectedChannelName}}
-              >{{channelName}}</option>
-            {{/each}}
-          </select>
-        </div>
-      </div>
-      {{textarea
-        class='message-box'
-        change=(action (mut messageValue) value='target.value')
-        rows=2
-        placeholder=(concat 'Message for ' block.entity.value)
-        value=messageValue
-        disabled=sendingMessage
-      }}
-      <div class='send-button-and-messages'>
-        <button
-          {{action 'sendMessage'}}
-          class='p-btn btn btn-light send-button no-style-button
-            {{if (or sendingMessage (not messageValue)) "disabled"}}'
-          disabled={{or sendingMessage (not messageValue)}}
-        >
-          {{#if sendingMessage}}
-            {{fa-icon
-              'spinner-third'
-              class='icon loading-icon'
-              size='md'
-              fixedWidth=true
-              spin=true
-              alt='Send Message'
-            }}
-          {{else}}
-            {{fa-icon icon='paper-plane' class='icon send-icon' size='md' fixedWidth=true}}
-          {{/if}}
-        </button>
-        {{#if messagingToast}}
-          <div class='alert alert-info'>
-            {{messagingToast}}
-          </div>
-        {{/if}}
-        {{#if errorMessagingToast}}
-          <div class='alert alert-danger'>
-            {{errorMessagingToast}}
-          </div>
-        {{/if}}
-      </div>
-    </div>
-  {{/if}}
-</div>
+{{!-- TODO: Tabs for Alerts, Indicator, & Events --}}
+{{!-- TODO: Have the Indicator and Alerts have subsections with the Title being the Alert 
+  Independent Indicators won't have a related Alert and thus will be under a hardcoded Title
+--}}
+
+{{!-- TODO: Was thinking you could links for all the related items in the overlay.  
+  For Example:
+    On Alerts you have a Related Indicator Count and Related Events Count.
+    You can make those properties a link or just an independent link with an action that
+    will change the tab and scroll to the section related to that alert.
+    Can use the Google Drive Integration for reference for scrolling logic
+    https://github.com/polarityio/google-drive/blob/adding-file-content/components/gdrive-block.js#L127
+ --}}
