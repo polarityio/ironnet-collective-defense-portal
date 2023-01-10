@@ -54,19 +54,18 @@ const groupEntities = (entities) =>
     .omit('unknown')
     .value();
 
-const splitOutIgnoredIps = (_entitiesPartition) => {
-  const { ignoredIPs, entitiesPartition } = _.groupBy(
-    _entitiesPartition,
+const organizeEntities = (entities) => {
+  const isNotIgnoredIp = (isIP, value) => !isIP || (isIP && !IGNORED_IPS.has(value))
+
+  const { searchableEntities, nonSearchableEntities } = _.groupBy(
+    entities,
     ({ isIP, value }) =>
-      !isIP || (isIP && !IGNORED_IPS.has(value)) ? 'entitiesPartition' : 'ignoredIPs'
+      isNotIgnoredIp(isIP, value) ? 'searchableEntities' : 'nonSearchableEntities'
   );
 
   return {
-    entitiesPartition,
-    ignoredIpLookupResults: _.map(ignoredIPs, (entity) => ({
-      entity,
-      data: null
-    }))
+    searchableEntities,
+    nonSearchableEntities
   };
 };
 
@@ -212,10 +211,15 @@ const allCombinations = (
     arrayToCombine
   );
 
+const buildIgnoreResults = map((entity) => ({
+  entity,
+  data: null
+}));
+
 module.exports = {
   getKeys,
   groupEntities,
-  splitOutIgnoredIps,
+  organizeEntities,
   objectPromiseAll,
   asyncObjectReduce,
   mapObject,
@@ -232,5 +236,6 @@ module.exports = {
   encodeBase64,
   decodeBase64,
   standardizeEntityTypes,
-  allCombinations
+  allCombinations,
+  buildIgnoreResults
 };

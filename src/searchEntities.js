@@ -1,11 +1,10 @@
-const createLookupResults = require('./createLookupResults');
 const {
   getAlertsAndRelatedIncidents,
   getIndependentIncidents,
   getEvents
 } = require('./queries');
 
-const getLookupResults = async (entities, options) => {
+const searchEntities = async (entities, options) => {
   const { alerts, relatedIncidents = [] } = await getAlertsAndRelatedIncidents(
     entities,
     options
@@ -18,9 +17,11 @@ const getLookupResults = async (entities, options) => {
 
   const incidents = relatedIncidents.concat(independentIncidents);
 
-  const lookupResults = createLookupResults(entities, alerts, incidents, events, options);
-
-  return lookupResults;
+  return {
+    alerts,
+    incidents,
+    events
+  };
 };
 
-module.exports = getLookupResults;
+module.exports = searchEntities;

@@ -71,7 +71,7 @@ const createRequestWithDefaults = () => {
   };
 
   const checkForStatusError = ({ statusCode, body }, requestOptions) => {
-    const Logger = getLogger('../../integration');
+    const Logger = getLogger();
 
     const requestOptionsWithoutSensitiveData = {
       ...requestOptions,
@@ -82,14 +82,13 @@ const createRequestWithDefaults = () => {
       }
     };
 
-    Logger(
+    Logger.trace(
       {
         MESSAGE: 'Request Ran, Checking Status...',
         statusCode,
         requestOptions: requestOptionsWithoutSensitiveData,
         responseBody: body
-      },
-      'trace'
+      }
     );
 
     const roundedStatus = Math.round(statusCode / 100) * 100;

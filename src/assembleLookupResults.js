@@ -1,6 +1,6 @@
 const { flow, get, size, find, eq, map, some, keys } = require('lodash/fp');
 
-const createLookupResults = (entities, alerts, incidents, events, options) =>
+const assembleLookupResults = (entities, alerts, incidents, events, options) =>
   map((entity) => {
     const resultsForThisEntity = getResultsForThisEntity(
       entity,
@@ -41,4 +41,4 @@ const createSummaryTags = ({ alerts, incidents, events }, options) => {
   return [];
 };
 
-module.exports = createLookupResults;
+module.exports = assembleLookupResults;

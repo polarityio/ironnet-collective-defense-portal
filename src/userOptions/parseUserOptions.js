@@ -1,6 +1,6 @@
 const { map, get, flow, __ } = require('lodash/fp');
 
-const parseUserOptionLists = (options) => {
+const parseUserOptions = (options) => {
   const selectOptionKeys = [
     'ignoreAnalystSeverity',
     'ignoreCategories',
@@ -17,4 +17,4 @@ const parseUserOptionLists = (options) => {
   };
 };
 
-module.exports = parseUserOptionLists;
+module.exports = parseUserOptions;
