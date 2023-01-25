@@ -2,20 +2,20 @@ const { map, flow, uniqBy, get } = require('lodash/fp');
 const { requestsInParallel } = require('../request');
 const { alertQueryItemShape, MAX_PAGE_SIZE, createIgnoreFilter } = require('./utils');
 
-const getAlertsAndRelatedIncidents = async (entities, options) => {
+const getAlertsAndRelatedIndicators = async (entities, options) => {
   const alerts = await getAlerts(entities, options);
-  const relatedIncidents = parseOutRelatedIncidents(alerts);
+  const relatedIndicators = parseOutRelatedIndicators(alerts);
 
   return {
     alerts,
-    relatedIncidents
+    relatedIndicators
   };
 };
 /**
  * return {
  *   alerts: [{ entity: {...}, result: [{...}] }],
- *   *** Related Incidents are incidents that are returned from found Alerts ***
- *   relatedIncidents: [{ entity: {...}, result: [{...}] }]
+ *   *** Related Indicators are indicators that are returned from found Alerts ***
+ *   relatedIndicators: [{ entity: {...}, result: [{...}] }]
  * };
  */
 
@@ -58,7 +58,9 @@ const createAlertsQueryBuilder = (entity, options) => (page) => {
       sortBy: { field: severity, direction: Descending }
       filter: {
         and: [
-          { indicator: { operator: Like, value: "${entity.value}" } },
+          { indicator: { operator: ${entity.isIP ? 'Eq' : 'Like'}, value: "${
+            entity.value
+          }" } },
           { severity: { operator: Gte, value: ${options.minSeverity} }},
           ${ignoreAnalystSeverityFilter}
           ${ignoreCategoriesFilter}
@@ -76,9 +78,9 @@ const createAlertsQueryBuilder = (entity, options) => (page) => {
   }`;
 };
 
-const parseOutRelatedIncidents = map(({ entity, result }) => ({
+const parseOutRelatedIndicators = map(({ entity, result }) => ({
   entity,
   result: flow(map(get('indicatorAlertCount')), uniqBy('indicatorValue'))(result)
 }));
 
-module.exports = getAlertsAndRelatedIncidents;
+module.exports = getAlertsAndRelatedIndicators;

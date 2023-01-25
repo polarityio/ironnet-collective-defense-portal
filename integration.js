@@ -20,7 +20,7 @@ const doLookup = async (entities, userOptions, cb) => {
 
     const options = parseUserOptions(userOptions);
 
-    const { alerts, incidents, events } = await searchEntities(
+    const { alerts, indicators, events } = await searchEntities(
       searchableEntities,
       options
     );
@@ -28,7 +28,7 @@ const doLookup = async (entities, userOptions, cb) => {
     const lookupResults = assembleLookupResults(
       entities,
       alerts,
-      incidents,
+      indicators,
       events,
       options
     );

@@ -1,29 +1,29 @@
 const { map } = require('lodash/fp');
 const { requestsInParallel } = require('../request');
-const { createIgnoreFilter, incidentItemShape, MAX_PAGE_SIZE } = require('./utils');
+const { createIgnoreFilter, indicatorItemShape, MAX_PAGE_SIZE } = require('./utils');
 
-const getIndependentIncidents = async (entities, options) => {
-  const independentIncidentRequests = map(
+const getIndependentIndicators = async (entities, options) => {
+  const independentIndicatorRequests = map(
     (entity) => ({
       entity,
-      queryBuilder: createIndependentIncidentsQueryBuilder(entity, options),
+      queryBuilder: createIndependentIndicatorsQueryBuilder(entity, options),
       options
     }),
     entities
   );
 
-  const independentIncidentQueryResults = await requestsInParallel(
-    independentIncidentRequests
+  const independentIndicatorQueryResults = await requestsInParallel(
+    independentIndicatorRequests
   );
 
-  return independentIncidentQueryResults;
+  return independentIndicatorQueryResults;
 };
 /**
- * *** Independent Incidents are incidents that do not have any Alerts associated with them
+ * *** Independent Indicators are indicators that do not have any Alerts associated with them
  * return [{ entity: {...}, result: [{...}] }];
  */
 
-const createIndependentIncidentsQueryBuilder = (entity, options) => (page) => {
+const createIndependentIndicatorsQueryBuilder = (entity, options) => (page) => {
   const ignoreSubCategoriesFilter = createIgnoreFilter(
     'subCategory',
     options.ignoreSubCategoriesValues
@@ -40,7 +40,9 @@ const createIndependentIncidentsQueryBuilder = (entity, options) => (page) => {
       ]
       filter: {
         and: [
-          { indicatorValue: { operator: Like, value: "${entity.value}" } },
+          { indicatorValue: { operator: ${entity.isIP ? 'Eq' : 'Like'}, value: "${
+            entity.value
+          }" } },
           { maxSeverity: { operator: Gte, value: ${options.minSeverity} } }
           { totalAlertsCount: { operator: Eq, value: 0 } }
           ${ignoreSubCategoriesFilter}
@@ -52,10 +54,10 @@ const createIndependentIncidentsQueryBuilder = (entity, options) => (page) => {
       end
       total
       items {
-        ${incidentItemShape}
+        ${indicatorItemShape}
       }
     }
   }`;
 };
 
-module.exports = getIndependentIncidents;
+module.exports = getIndependentIndicators;

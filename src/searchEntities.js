@@ -1,25 +1,25 @@
 const {
-  getAlertsAndRelatedIncidents,
-  getIndependentIncidents,
+  getAlertsAndRelatedIndicators,
+  getIndependentIndicators,
   getEvents
 } = require('./queries');
 
 const searchEntities = async (entities, options) => {
-  const { alerts, relatedIncidents = [] } = await getAlertsAndRelatedIncidents(
+  const { alerts, relatedIndicators = [] } = await getAlertsAndRelatedIndicators(
     entities,
     options
   );
 
-  const [independentIncidents, events] = await Promise.all([
-    getIndependentIncidents(entities, options),
+  const [independentIndicators, events] = await Promise.all([
+    getIndependentIndicators(entities, options),
     getEvents(alerts, options)
   ]);
 
-  const incidents = relatedIncidents.concat(independentIncidents);
+  const indicators = relatedIndicators.concat(independentIndicators);
 
   return {
     alerts,
-    incidents,
+    indicators,
     events
   };
 };

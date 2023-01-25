@@ -9,7 +9,7 @@ const createIgnoreFilter = (key, values) =>
     (filters) => (size(filters) ? `{ and: [ ${filters} ] },\n` : '')
   )(values);
 
-const incidentItemShape = `
+const indicatorItemShape = `
   indicatorValue
   indicatorType
   maxSeverity
@@ -33,7 +33,7 @@ const incidentItemShape = `
 const alertQueryItemShape = `
   id
   indicatorAlertCount {
-    ${incidentItemShape}
+    ${indicatorItemShape}
   }
   severity
   alertCreated
@@ -111,6 +111,6 @@ module.exports = {
   MAX_PAGE_SIZE,
   createIgnoreFilter,
   alertQueryItemShape,
-  incidentItemShape,
+  indicatorItemShape,
   eventsQueryItemShape
 };
