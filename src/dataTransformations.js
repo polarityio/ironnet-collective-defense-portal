@@ -55,7 +55,7 @@ const groupEntities = (entities) =>
     .value();
 
 const organizeEntities = (entities) => {
-  const isNotIgnoredIp = (isIP, value) => !isIP || (isIP && !IGNORED_IPS.has(value))
+  const isNotIgnoredIp = (isIP, value) => !isIP || (isIP && !IGNORED_IPS.has(value));
 
   const { searchableEntities, nonSearchableEntities } = _.groupBy(
     entities,
@@ -108,13 +108,15 @@ const and =
 // func: (value, key) => [newKey, newValue], obj: { key1:value1, key2:value2 }
 // return { newKey1: newValue1, newKey2: newValue2 }
 const mapObject = curry((func, obj) =>
-  flow(
-    Object.entries,
-    map(([key, value]) => func(value, key)),
-    filter(and(negate(isEmpty), flow(size, eq(2)))),
-    transpose2DArray,
-    ([keys, values]) => zipObject(keys, values)
-  )(obj)
+  obj
+    ? flow(
+        Object.entries,
+        map(([key, value]) => func(value, key)),
+        filter(and(negate(isEmpty), flow(size, eq(2)))),
+        transpose2DArray,
+        ([keys, values]) => zipObject(keys, values)
+      )(obj)
+    : obj
 );
 
 const mapObjectAsync = async (func, obj) => {

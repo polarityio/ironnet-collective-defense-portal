@@ -1,13 +1,346 @@
-{{!-- TODO: Tabs for Alerts, Indicator, & Events --}}
-{{!-- TODO: Have the Indicator and Alerts have subsections with the Title being the Alert 
-  Independent Indicators won't have a related Alert and thus will be under a hardcoded Title
---}}
+{{! TODO: Tabs for Alerts, Indicator, & Events }}
+{{! TODO: Have the Indicator and Alerts have subsections with the Title being the Alert 
+  Independent indicators won't have a related Alert and thus will be under a hardcoded Title
+}}
 
-{{!-- TODO: Was thinking you could links for all the related items in the overlay.  
+{{! TODO: Was thinking you could links for all the related items in the overlay.  
   For Example:
     On Alerts you have a Related Indicator Count and Related Events Count.
     You can make those properties a link or just an independent link with an action that
-    will change the tab and scroll to the section related to that alert.
+    will change the tab and scroll to the section related to that indicator.
     Can use the Google Drive Integration for reference for scrolling logic
     https://github.com/polarityio/google-drive/blob/adding-file-content/components/gdrive-block.js#L127
- --}}
+ }}
+
+<ul class="nav nav-tabs">
+  {{#if details.alerts.length}}
+    <li class="nav-item">
+      <a
+        {{action "changeTab" "alerts"}}
+        class="nav-link {{if (or (eq activeTab 'alerts') (not activeTab)) 'active'}}"
+        href="#"
+      >
+        Alerts
+      </a>
+    </li>
+  {{/if}}
+  {{#if details.indicators.length}}
+    <li class="nav-item">
+      <a
+        {{action "changeTab" "indicators"}}
+        class="nav-link {{if (eq activeTab 'indicators') 'active'}}"
+        href="#"
+      >
+        Indicators
+      </a>
+    </li>
+  {{/if}}
+  {{#if details.events.length}}
+    <li class="nav-item">
+      <a
+        {{action "changeTab" "events"}}
+        class="nav-link {{if (eq activeTab 'events') 'active'}}"
+        href="#"
+      >
+        Events
+      </a>
+    </li>
+  {{/if}}
+</ul>
+{{#if (eq activeTab "alerts")}}
+  <div class="tab-content alerts">
+    {{#each details.alerts as |alert alertIndex|}}
+      {{#if (gt alertIndex 0)}}
+        <hr />
+      {{/if}}
+      <div class="alert">
+        {{#if alert.id}}
+          <div>
+            <a
+              class="p-link"
+              href="https://cdp.ironnetcybercloud.com/detect/{{alert.id}}"
+            >
+              View Alert on IronNet
+              {{fa-icon "external-link-square" class="external-link-icon"}}</a>
+          </div>
+        {{/if}}
+        {{#if alert.indicatorAlertCount.indicatorValue}}
+          <div>
+            <a
+              class="p-link"
+              href="https://cdp.ironnetcybercloud.com/detect/indicatorintelligence/{{alert.indicatorAlertCount.indicatorValue}}"
+            >
+              View Indicator on IronNet
+              {{fa-icon "external-link-square" class="external-link-icon"}}</a>
+          </div>
+        {{/if}}
+        <br />
+        {{#if alert.indicatorAlertCount.indicatorValue}}
+          <div>
+            <span class="p-key">Indicator: </span>
+            <span class="p-value">{{alert.indicatorAlertCount.indicatorValue}}</span>
+          </div>
+        {{/if}}
+        {{#if alert.severity}}
+          <div class="severity">
+            <span class="p-key">Severity: </span>
+            <span
+              class="p-value{{if (gte alert.severity 750) ' red'}}{{if
+                  (and (lt alert.severity 750) (gte alert.severity 500))
+                  ' orange'
+                }}{{if (lt alert.severity 500) ' green'}}"
+            >{{alert.severity}}</span>
+          </div>
+        {{/if}}
+        {{#if alert.alertCreated}}
+          <div>
+            <span class="p-key">Created: </span>
+            <span class="p-value">{{moment-format
+                alert.alertCreated
+                "ddd MMM DD, YYYY h:mm:ss A"
+                timeZone=timezone
+              }}</span>
+          </div>
+        {{/if}}
+        {{#if alert.alertUpdated}}
+          <div>
+            <span class="p-key">Updated: </span>
+            <span class="p-value">{{moment-format
+                alert.alertUpdated
+                "ddd MMM DD, YYYY h:mm:ss A"
+                timeZone=timezone
+              }}</span>
+          </div>
+        {{/if}}
+        {{#if alert.analystSeverity}}
+          <div>
+            <span class="p-key">Analyst Severity: </span>
+            <span class="p-value">{{titleize
+                (humanize (dasherize alert.analystSeverity))
+              }}</span>
+          </div>
+        {{/if}}
+        {{#if alert.analystExpectation}}
+          <div>
+            <span class="p-key">Analyst Expectation: </span>
+            <span class="p-value">{{titleize
+                (humanize (dasherize alert.analystExpectation))
+              }}</span>
+          </div>
+        {{/if}}
+        {{#if alert.category}}
+          <div>
+            <span class="p-key">Category: </span>
+            <span class="p-value">{{uppercase (humanize alert.category)}}</span>
+          </div>
+        {{/if}}
+        {{#if alert.subCategory}}
+          <div>
+            <span class="p-key">Sub Category: </span>
+            <span class="p-value">{{uppercase (humanize alert.subCategory)}}</span>
+          </div>
+        {{/if}}
+        {{#if alert.formattedStatus}}
+          <div>
+            <span class="p-key">Alert Status: </span>
+            <span class="p-value">{{titleize alert.formattedStatus}}</span>
+          </div>
+        {{/if}}
+        <br />
+        {{#if alert.mitreTacticTechniquePair}}
+          {{#if (get mitreExpandableTitleStates alertIndex)}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleMitreExpandableTitle" alertIndex)}}
+            >
+              <span class="text">MITRE Tactic/Technique ({{alert.mitreTacticTechniquePair.length}})</span>
+              {{fa-icon "angle-up"}}
+            </a>
+            <div class="mitre-fields">
+              {{#each alert.mitreTacticTechniquePair as |mitre index|}}
+                <div class="mitre-field">
+                  {{titleize mitre.formattedTactic}}
+                  ({{mitre.mitreTacticCode}}) /
+                  {{titleize mitre.formattedTechnique}}
+                  ({{mitre.mitreTechniqueCode}})
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleMitreExpandableTitle" alertIndex)}}
+            >
+              <span class="text">MITRE Tactic/Technique ({{alert.mitreTacticTechniquePair.length}})</span>
+              {{fa-icon "angle-down"}}
+            </a>
+          {{/if}}
+        {{/if}}
+        {{#if alert.correlations}}
+          {{#if (get correlationsExpandableTitleStates alertIndex)}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleCorrelationsExpandableTitle" alertIndex)}}
+            >
+              <span class="text">Correlations ({{alert.correlationCount}})</span>
+              {{fa-icon "angle-up"}}
+            </a>
+            {{#each-in alert.correlations as |key value|}}
+              <div>
+                <span class="p-key">{{key}}: </span>
+                <span class="p-value">{{value}}</span>
+              </div>
+            {{/each-in}}
+          {{else}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleCorrelationsExpandableTitle" alertIndex)}}
+            >
+              <span class="text">Correlations ({{alert.correlationCount}})</span>
+              {{fa-icon "angle-down"}}
+            </a>
+          {{/if}}
+        {{/if}}
+      </div>
+    {{/each}}
+  </div>
+{{/if}}
+{{#if (eq activeTab "indicators")}}
+  <div class="tab-content indicators">
+    {{#each details.indicators as |indicator indicatorIndex|}}
+      <div class="indicator">
+        {{#if indicator.indicatorValue}}
+          <div>
+            <a
+              class="p-link"
+              href="https://cdp.ironnetcybercloud.com/detect/indicatorintelligence/{{indicator.indicatorValue}}"
+            >
+              View Indicator on IronNet
+              {{fa-icon "external-link-square" class="external-link-icon"}}</a>
+          </div>
+          <br />
+          <div>
+            <span class="p-key">Indicator: </span>
+            <span class="p-value">{{indicator.indicatorValue}}</span>
+          </div>
+        {{/if}}
+        {{#if indicator.maxSeverity}}
+          <div>
+            <span class="p-key">Max Severity: </span>
+            <span
+              class="p-value{{if (gte indicator.maxSeverity 750) ' red'}}{{if
+                  (and (lt indicator.maxSeverity 750) (gte indicator.maxSeverity 500))
+                  ' orange'
+                }}{{if (lt indicator.maxSeverity 500) ' green'}}"
+            >{{indicator.maxSeverity}}</span>
+          </div>
+        {{/if}}
+        {{#if indicator.totalAlertsCount}}
+          <div>
+            <span class="p-key">Alerts: </span>
+            <span class="p-value">{{indicator.totalAlertsCount}}</span>
+          </div>
+        {{/if}}
+        {{#if indicator.whitelistedOrBenignAlertsCount}}
+          <div>
+            <span class="p-key">Safelisted / Benign: </span>
+            <span class="p-value">{{indicator.whitelistedOrBenignAlertsCount}}</span>
+          </div>
+        {{/if}}
+        {{#if indicator.suspiciousOrMaliciousAlertsCount}}
+          <div>
+            <span class="p-key">Suspicious / Malicious: </span>
+            <span class="p-value">{{indicator.suspiciousOrMaliciousAlertsCount}}</span>
+          </div>
+        {{/if}}
+        {{#if indicator.firstAlertCreatedTime}}
+          <div>
+            <span class="p-key">First Alert: </span>
+            <span class="p-value">{{indicator.firstAlertCreatedTime}}</span>
+          </div>
+        {{/if}}
+        {{#if indicator.lastAlertCreatedTime}}
+          <div>
+            <span class="p-key">Last Alert: </span>
+            <span class="p-value">{{indicator.lastAlertCreatedTime}}</span>
+          </div>
+        {{/if}}
+        <br />
+        {{#if indicator.allCommunities}}
+          {{#if (get communitiesExpandableTitleStates indicatorIndex)}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleCommunityExpandableTitle" indicatorIndex)}}
+            >
+              <span class="text">Sectors ({{indicator.allCommunities.length}})</span>
+              {{fa-icon "angle-up"}}
+            </a>
+            <div class="sector-names">
+              {{#each indicator.allCommunities as |community|}}
+                <div class="sector-name">
+                  {{community.name}}
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleCommunityExpandableTitle" indicatorIndex)}}
+            >
+              <span class="text">Sectors ({{indicator.allCommunities.length}})</span>
+              {{fa-icon "angle-down"}}
+            </a>
+          {{/if}}
+        {{/if}}
+        {{#if indicator.categories}}
+          {{#if (get categoriesExpandableTitleStates indicatorIndex)}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleCategoryExpandableTitle" indicatorIndex)}}
+            >
+              <span class="text">Unique Categories ({{indicator.categories.length}})</span>
+              {{fa-icon "angle-up"}}
+            </a>
+            <div class="categories">
+              {{#each indicator.categories as |category|}}
+                <div class="category">
+                  {{category.category}}: {{category.subCategory}}
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleCategoryExpandableTitle" indicatorIndex)}}
+            >
+              <span class="text">Unique Categories ({{indicator.categories.length}})</span>
+              {{fa-icon "angle-down"}}
+            </a>
+          {{/if}}
+        {{/if}}
+      </div>
+    {{/each}}
+  </div>
+{{/if}}
+{{#if (eq activeTab "events")}}
+  <div class="tab-content events">
+    {{#each details.events as |event|}}
+      <div class="event">
+        {{#if event.category}}
+          <div>
+            <span class="p-key">category: </span>
+            <span class="p-value">{{event.category}}</span>
+          </div>
+        {{/if}}
+      </div>
+    {{/each}}
+  </div>
+{{/if}}

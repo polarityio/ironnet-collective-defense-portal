@@ -1,9 +1,9 @@
-const getAlertsAndRelatedIncidents = require('./getAlertsAndRelatedIncidents');
+const getAlerts = require('./getAlerts');
+const getIndicators = require('./getIndicators');
 const getEvents = require('./getEvents');
-const getIndependentIncidents = require('./getIndependentIncidents');
 
 module.exports = {
-  getAlertsAndRelatedIncidents,
-  getEvents,
-  getIndependentIncidents
+  getAlerts,
+  getIndicators,
+  getEvents
 };

@@ -290,7 +290,16 @@ module.exports = {
       multiple: true,
       userCanEdit: true,
       adminOnly: false
-    }
+    },
+    {
+      key: "speedUpSearch",
+      name: "Speed Up Search",
+      description: "If checked, we will only search for an exact string match on entities, which speeds up the search at times up to 3x.\nThis does result in fewer search results (e.g. Unchecked: foo.com -> gets Alerts, Indicators, & Events for [foo.com, eu-1-foo.com, goodfoo.com ...];  Checked: foo.com -> gets Alerts, Indicators, & Events for [foo.com] only).",
+      default: false,
+      type: "boolean",
+      userCanEdit: false,
+      adminOnly: true,
+    },
     //TODO: Consider adding a days/months back number option.
     /** The Query filter for the graphql query looks like this:
      * would likely use moment to create timestamps similar to
