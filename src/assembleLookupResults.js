@@ -36,9 +36,10 @@ const getResultsForThisEntity = (entity, alerts, indicators, events, options) =>
   };
 };
 
-const createSummaryTags = ({ alerts, indicators, events }, options) => {
-  //TODO: Create Tags from Results once UI is implemented
-  return [];
-};
+const createSummaryTags = ({ alerts, indicators, events }, options) =>
+  []
+  .concat(size(alerts) ? `Alerts: ${size(alerts)}` : [])
+  .concat(size(indicators) ? `indicators: ${size(indicators)}` : [])
+  .concat(size(events) ? `events: ${size(events)}` : []);
 
 module.exports = assembleLookupResults;
