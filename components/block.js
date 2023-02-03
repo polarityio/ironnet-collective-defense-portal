@@ -37,7 +37,7 @@ polarity.export = PolarityComponent.extend({
   },
   actions: {
     changeTab: function (tabName) {
-      this.set('activeTab', tabName);
+      this.changeTab(tabName);
     },
     toggleMitreExpandableTitle: function (index) {
       this.toggleExpandableTitle('mitreExpandableTitleStates', index);
@@ -53,7 +53,19 @@ polarity.export = PolarityComponent.extend({
     },
     toggleContextFieldsExpandableTitle: function (index) {
       this.toggleExpandableTitle('contextFieldsExpandableTitleStates', index);
+    },
+    scrollTo: function(tabName, scrollToPropertyValue) {
+      this.changeTab(tabName);
+      setTimeout(() => {
+        const element = document.getElementById(scrollToPropertyValue);
+        element && element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300)
     }
+  },
+  changeTab: function(tabName) {
+    this.set('activeTab', tabName);
+
+    this.get('block').notifyPropertyChange('data');
   },
   toggleExpandableTitle: function (key, index) {
     this.set(

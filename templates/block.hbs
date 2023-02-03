@@ -69,11 +69,17 @@
               {{fa-icon "external-link-square" class="external-link-icon"}}</a>
           </div>
         {{/if}}
+
         <br />
+
         {{#if alert.indicatorAlertCount.indicatorValue}}
-          <div>
+          <div id="{{alert.id}}">
             <span class="p-key">Indicator: </span>
-            <span class="p-value">{{alert.indicatorAlertCount.indicatorValue}}</span>
+            <span
+              {{action "scrollTo" "indicators" alert.indicatorAlertCount.indicatorValue}}
+              class="p-value"
+            >{{alert.indicatorAlertCount.indicatorValue}}
+              <span class="view-in-tab">(View in Tab)</span></span>
           </div>
         {{/if}}
         {{#if alert.severity}}
@@ -141,7 +147,9 @@
             <span class="p-value">{{titleize alert.formattedStatus}}</span>
           </div>
         {{/if}}
+
         <br />
+
         {{#if alert.mitreTacticTechniquePair}}
           {{#if (get mitreExpandableTitleStates alertIndex)}}
             <a
@@ -220,8 +228,10 @@
               View Indicator on IronNet
               {{fa-icon "external-link-square" class="external-link-icon"}}</a>
           </div>
+
           <br />
-          <div>
+
+          <div id="{{indicator.indicatorValue}}">
             <span class="p-key">Indicator: </span>
             <span class="p-value">{{indicator.indicatorValue}}</span>
           </div>
@@ -287,7 +297,9 @@
               }}</span>
           </div>
         {{/if}}
+
         <br />
+        
         {{#if indicator.allCommunities}}
           {{#if (get communitiesExpandableTitleStates indicatorIndex)}}
             <a
@@ -376,13 +388,28 @@
               {{fa-icon "external-link-square" class="external-link-icon"}}</a>
           </div>
         {{/if}}
+
         <br />
+
+        {{#if event.alertId}}
+          <div>
+            <span class="p-key">Alert: </span>
+            <span {{action "scrollTo" "alerts" event.alertId}} class="view-in-tab">(View
+              Alert in Tab)</span>
+          </div>
+        {{/if}}
         {{#if event.alert.indicatorAlertCount.indicatorValue}}
           <div>
             <span class="p-key">Indicator: </span>
             <span
+              {{action
+                "scrollTo"
+                "indicators"
+                event.alert.indicatorAlertCount.indicatorValue
+              }}
               class="p-value"
-            >{{event.alert.indicatorAlertCount.indicatorValue}}</span>
+            >{{event.alert.indicatorAlertCount.indicatorValue}}
+              <span class="view-in-tab">(View in Tab)</span></span>
           </div>
         {{/if}}
         {{#if event.severity}}
@@ -434,13 +461,13 @@
             <span class="p-value">{{event.subCategory}}</span>
           </div>
         {{/if}}
+
         <br />
+
         {{#if event.formattedContext}}
           {{#each-in event.formattedContext as |contextCategory contextFields|}}
             {{#if
-              (get
-                contextFieldsExpandableTitleStates (concat eventIndex contextCategory)
-              )
+              (get contextFieldsExpandableTitleStates (concat eventIndex contextCategory))
             }}
               <a
                 href="#"
