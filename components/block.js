@@ -7,6 +7,7 @@ polarity.export = PolarityComponent.extend({
   correlationsExpandableTitleStates: {},
   communitiesExpandableTitleStates: {},
   categoriesExpandableTitleStates: {},
+  contextFieldsExpandableTitleStates: {},
   activeTab: 'alerts',
   init() {
     const details = this.get('details');
@@ -49,6 +50,9 @@ polarity.export = PolarityComponent.extend({
     },
     toggleCategoryExpandableTitle: function (index) {
       this.toggleExpandableTitle('categoriesExpandableTitleStates', index);
+    },
+    toggleContextFieldsExpandableTitle: function (index) {
+      this.toggleExpandableTitle('contextFieldsExpandableTitleStates', index);
     }
   },
   toggleExpandableTitle: function (key, index) {

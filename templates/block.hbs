@@ -157,9 +157,9 @@
               <span class="text">MITRE Tactic/Technique ({{alert.mitreTacticTechniquePair.length}})</span>
               {{fa-icon "angle-up"}}
             </a>
-            <div class="mitre-fields">
+            <div class="expandable-title-display-fields">
               {{#each alert.mitreTacticTechniquePair as |mitre index|}}
-                <div class="mitre-field">
+                <div class="expandable-title-display-field">
                   {{titleize mitre.formattedTactic}}
                   ({{mitre.mitreTacticCode}}) /
                   {{titleize mitre.formattedTechnique}}
@@ -212,6 +212,9 @@
 {{#if (eq activeTab "indicators")}}
   <div class="tab-content indicators">
     {{#each details.indicators as |indicator indicatorIndex|}}
+      {{#if (gt indicatorIndex 0)}}
+        <hr />
+      {{/if}}
       <div class="indicator">
         {{#if indicator.indicatorValue}}
           <div>
@@ -241,14 +244,20 @@
         {{/if}}
         {{#if indicator.totalAlertsCount}}
           <div>
-            <span class="p-key">Alerts: </span>
+            <span class="p-key">Total Alerts: </span>
             <span class="p-value">{{indicator.totalAlertsCount}}</span>
           </div>
         {{/if}}
-        {{#if indicator.whitelistedOrBenignAlertsCount}}
+        {{#if indicator.totalExpiredAlertsCount}}
           <div>
-            <span class="p-key">Safelisted / Benign: </span>
-            <span class="p-value">{{indicator.whitelistedOrBenignAlertsCount}}</span>
+            <span class="p-key">Total Expired Alerts: </span>
+            <span class="p-value">{{indicator.totalExpiredAlertsCount}}</span>
+          </div>
+        {{/if}}
+        {{#if indicator.closedAlertsCount}}
+          <div>
+            <span class="p-key">Closed Alerts: </span>
+            <span class="p-value">{{indicator.closedAlertsCount}}</span>
           </div>
         {{/if}}
         {{#if indicator.suspiciousOrMaliciousAlertsCount}}
@@ -257,16 +266,30 @@
             <span class="p-value">{{indicator.suspiciousOrMaliciousAlertsCount}}</span>
           </div>
         {{/if}}
+        {{#if indicator.whitelistedOrBenignAlertsCount}}
+          <div>
+            <span class="p-key">Safelisted / Benign: </span>
+            <span class="p-value">{{indicator.whitelistedOrBenignAlertsCount}}</span>
+          </div>
+        {{/if}}
         {{#if indicator.firstAlertCreatedTime}}
           <div>
             <span class="p-key">First Alert: </span>
-            <span class="p-value">{{indicator.firstAlertCreatedTime}}</span>
+            <span class="p-value">{{moment-format
+                indicator.firstAlertCreatedTime
+                "ddd MMM DD, YYYY h:mm:ss A"
+                timeZone=timezone
+              }}</span>
           </div>
         {{/if}}
         {{#if indicator.lastAlertCreatedTime}}
           <div>
             <span class="p-key">Last Alert: </span>
-            <span class="p-value">{{indicator.lastAlertCreatedTime}}</span>
+            <span class="p-value">{{moment-format
+                indicator.lastAlertCreatedTime
+                "ddd MMM DD, YYYY h:mm:ss A"
+                timeZone=timezone
+              }}</span>
           </div>
         {{/if}}
         <br />
@@ -280,9 +303,9 @@
               <span class="text">Sectors ({{indicator.allCommunities.length}})</span>
               {{fa-icon "angle-up"}}
             </a>
-            <div class="sector-names">
+            <div class="expandable-title-display-fields">
               {{#each indicator.allCommunities as |community|}}
-                <div class="sector-name">
+                <div class="expandable-title-display-field">
                   {{community.name}}
                 </div>
               {{/each}}
@@ -308,10 +331,11 @@
               <span class="text">Unique Categories ({{indicator.categories.length}})</span>
               {{fa-icon "angle-up"}}
             </a>
-            <div class="categories">
+            <div class="expandable-title-display-fields">
               {{#each indicator.categories as |category|}}
-                <div class="category">
-                  {{category.category}}: {{category.subCategory}}
+                <div class="expandable-title-display-field">
+                  {{category.category}}:
+                  {{category.subCategory}}
                 </div>
               {{/each}}
             </div>
@@ -332,13 +356,138 @@
 {{/if}}
 {{#if (eq activeTab "events")}}
   <div class="tab-content events">
-    {{#each details.events as |event|}}
+    {{#each details.events as |event eventIndex|}}
       <div class="event">
+        {{#if (gt eventIndex 0)}}
+          <hr />
+        {{/if}}
+        {{#if (and event.id event.alertId)}}
+          <div>
+            <a
+              class="p-link"
+              href="https://cdp.ironnetcybercloud.com/detect/{{event.alertId}}?event={{event.id}}"
+            >
+              View Event on IronNet
+              {{fa-icon "external-link-square" class="external-link-icon"}}</a>
+          </div>
+        {{/if}}
+        {{#if event.alertId}}
+          <div>
+            <a
+              class="p-link"
+              href="https://cdp.ironnetcybercloud.com/detect/{{event.alertId}}"
+            >
+              View Associated Alert on IronNet
+              {{fa-icon "external-link-square" class="external-link-icon"}}</a>
+          </div>
+        {{/if}}
+        <br />
+        {{#if event.alert.indicatorAlertCount.indicatorValue}}
+          <div>
+            <span class="p-key">Indicator: </span>
+            <span
+              class="p-value"
+            >{{event.alert.indicatorAlertCount.indicatorValue}}</span>
+          </div>
+        {{/if}}
+        {{#if event.severity}}
+          <div>
+            <span class="p-key">Expert System Severity: </span>
+            <span
+              class="p-value{{if (gte event.severity 750) ' red'}}{{if
+                  (and (lt event.severity 750) (gte event.severity 500))
+                  ' orange'
+                }}{{if (lt event.severity 500) ' green'}}"
+            >{{event.severity}}</span>
+          </div>
+        {{/if}}
+        {{#if event.startTime}}
+          <div>
+            <span class="p-key">Event Start Time: </span>
+            <span class="p-value">{{moment-format
+                event.startTime
+                "ddd MMM DD, YYYY h:mm:ss A"
+                timeZone=timezone
+              }}</span>
+          </div>
+        {{/if}}
+        {{#if event.endTime}}
+          <div>
+            <span class="p-key">Event End Time: </span>
+            <span class="p-value">{{moment-format
+                event.endTime
+                "ddd MMM DD, YYYY h:mm:ss A"
+                timeZone=timezone
+              }}</span>
+          </div>
+        {{/if}}
+        {{#if event.expire}}
+          <div>
+            <span class="p-key">Is Expired: </span>
+            <span class="p-value">Yes</span>
+          </div>
+        {{/if}}
         {{#if event.category}}
           <div>
-            <span class="p-key">category: </span>
+            <span class="p-key">Category: </span>
             <span class="p-value">{{event.category}}</span>
           </div>
+        {{/if}}
+        {{#if event.subCategory}}
+          <div>
+            <span class="p-key">Sub Category: </span>
+            <span class="p-value">{{event.subCategory}}</span>
+          </div>
+        {{/if}}
+        <br />
+        {{#if event.formattedContext}}
+          {{#each-in event.formattedContext as |contextCategory contextFields|}}
+            {{#if
+              (get
+                contextFieldsExpandableTitleStates (concat eventIndex contextCategory)
+              )
+            }}
+              <a
+                href="#"
+                class="expandable-title"
+                {{on
+                  "click"
+                  (action
+                    "toggleContextFieldsExpandableTitle"
+                    (concat eventIndex contextCategory)
+                  )
+                }}
+              >
+                <span class="text">{{titleize (humanize contextCategory)}}</span>
+                {{fa-icon "angle-up"}}
+              </a>
+              <div class="expandable-title-display-fields">
+                {{#each-in contextFields as |fieldName fieldValues|}}
+                  {{#if fieldValues.length}}
+                    <div class="expandable-title-display-field">
+                      <span class="p-key">{{titleize (humanize fieldName)}}: </span>
+                      <span class="p-value">{{join ", " fieldValues}}</span>
+                    </div>
+                  {{/if}}
+                {{/each-in}}
+              </div>
+            {{else}}
+              <a
+                href="#"
+                class="expandable-title"
+                {{on
+                  "click"
+                  (action
+                    "toggleContextFieldsExpandableTitle"
+                    (concat eventIndex contextCategory)
+                  )
+                }}
+              >
+                <span class="text">{{titleize (humanize contextCategory)}}</span>
+                {{fa-icon "angle-down"}}
+              </a>
+            {{/if}}
+          {{/each-in}}
         {{/if}}
       </div>
     {{/each}}

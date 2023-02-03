@@ -1,7 +1,7 @@
 module.exports = {
   name: 'IronNet Collective Defense Portal',
   acronym: 'ICDP',
-  description: 'TODO',
+  description: 'Connect with IronNet Collective Defense Portal\'s Alert, Event, & Indicator data',
   entityTypes: ['domain', 'url', 'IPv4', 'IPv6', 'email'],
   styles: ['./styles/styles.less'],
   defaultColor: 'light-blue',
@@ -22,7 +22,7 @@ module.exports = {
     rejectUnauthorized: true
   },
   logging: {
-    level: 'trace' //trace, debug, info, warn, error, fatal
+    level: 'info' //trace, debug, info, warn, error, fatal
   },
   options: [
     {
@@ -294,19 +294,19 @@ module.exports = {
     {
       key: "speedUpSearch",
       name: "Speed Up Search",
-      description: "If checked, we will only search for an exact string match on entities, which speeds up the search at times up to 3x.\nThis does result in fewer search results (e.g. Unchecked: foo.com -> gets Alerts, Indicators, & Events for [foo.com, eu-1-foo.com, goodfoo.com ...];  Checked: foo.com -> gets Alerts, Indicators, & Events for [foo.com] only).",
-      default: false,
+      description: "If checked, we will only search for an exact string match on entities, which speeds up the search at times up to 3x & can help prevent timeout errors.\n\nThis does result in fewer search results (e.g. Unchecked: foo.com -> gets Alerts, Indicators, & Events for [foo.com, eu-1-foo.com, goodfoo.com ...];  Checked: foo.com -> gets Alerts, Indicators, & Events for [foo.com] only).",
+      default: true,
       type: "boolean",
       userCanEdit: false,
       adminOnly: true,
     },
-    //TODO: Consider adding a days/months back number option.
+    //Feature Suggestion: Consider adding a days/months back number option.
     /** The Query filter for the graphql query looks like this:
      * would likely use moment to create timestamps similar to
      * https://github.com/polarityio/microsoft-sentinel/blob/571d3864243ddc8c724db8ab7339e869b72f9db4/src/queries/utils.js#L23
      * OR
      * https://github.com/polarityio/hackerone/blob/52898af6abc93fe79d3ea019cd113a99928d2bd3/src/dataTransformations.js#L58
-     *  {
+     * Query Filter Structure: {
           alertCreated: {
             start: "2022-11-16T19:05:43.112Z"
             end: "2022-11-23T19:05:43.112Z"
