@@ -41,7 +41,7 @@ const getAlerts = async (entities, options) => {
 const createAlertsQueryBuilder = (entity, options) => (page) => {
   const ignoreAnalystSeverityFilter = createIgnoreFilter(
     'analystSeverity',
-    options.ignoreAnalystSeverity
+    options.ignoreAnalystSeverityValues
   );
 
   const ignoreCategoriesFilter = createIgnoreFilter(
@@ -54,7 +54,6 @@ const createAlertsQueryBuilder = (entity, options) => (page) => {
     options.ignoreSubCategoriesValues
   );
 
-  // TODO: Test User Option Filters
   return `{
     alerts(
       take: ${MAX_PAGE_SIZE}

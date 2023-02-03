@@ -28,12 +28,10 @@ const getIndicators = async (entities, options) => {
 
 const createIndicatorsQueryBuilder = (entity, options) => (page) => {
   const ignoreSubCategoriesFilter = createIgnoreFilter(
-    'subCategory',
+    'categoriesSubCategory',
     options.ignoreSubCategoriesValues
   );
 
-  // TODO: Test User Option Filters
-  // TODO: Found in testing the Like operator query to be slow.  Might need to change to Eq operator
   return `{
     indicatorCounts(
       take: ${MAX_PAGE_SIZE}

@@ -6,6 +6,7 @@ const parseUserOptions = (options) => {
     'ignoreCategories',
     'ignoreSubCategories'
   ];
+
   const [ignoreAnalystSeverityValues, ignoreCategoriesValues, ignoreSubCategoriesValues] =
     map(flow(get(__, options), map(get('value'))), selectOptionKeys);
 

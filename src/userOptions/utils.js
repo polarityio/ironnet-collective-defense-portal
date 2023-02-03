@@ -10,14 +10,15 @@ const {
   uniq,
   compact,
   first,
-  replace
+  replace,
+  toLower
 } = require('lodash/fp');
 const { transpose2DArray } = require('../dataTransformations');
 const reduce = require('lodash/fp/reduce').convert({ cap: false });
 
 const compareStringLetters = (str1, str2) => {
   const getStringLetters = flow(toLower, replace(/\W/gi, ''));
-  return getStringLetters(team.displayName) === getStringLetters(options.teamName);
+  return getStringLetters(str1) === getStringLetters(str2);
 };
 
 const flattenOptions = (options) =>
