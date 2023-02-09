@@ -61,7 +61,7 @@ const createAlertsQueryBuilder = (entity, options) => (page) => {
       sortBy: { field: severity, direction: Descending }
       filter: {
         and: [
-          { indicator: { operator: ${entity.isIP || options.speedUpSearch ? 'Eq' : 'Like'}, value: "${
+          { indicator: { operator: Eq, value: "${
             entity.value
           }" } },
           { severity: { operator: Gte, value: ${options.minSeverity} }},

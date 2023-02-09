@@ -78,26 +78,31 @@ const createRequestWithDefaults = () => {
       options: '{...}',
       headers: {
         ...requestOptions.headers,
-        'x-api-key': '****************'
+        'x-api-key': '***'
       }
     };
 
-    Logger.trace(
-      {
-        MESSAGE: 'Request Ran, Checking Status...',
-        statusCode,
-        requestOptions: requestOptionsWithoutSensitiveData,
-        responseBody: body
-      }
-    );
+    Logger.trace({
+      MESSAGE: 'Request Ran, Checking Status...',
+      statusCode,
+      requestOptions: requestOptionsWithoutSensitiveData,
+      responseBody: body
+    });
 
     const roundedStatus = Math.round(statusCode / 100) * 100;
     const statusCodeNotSuccessful =
       !SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES.includes(roundedStatus);
+    const responseBodyErrors = get('errors.0', body);
 
-    if (statusCodeNotSuccessful) {
-      const requestError = Error('Request Error');
-      requestError.status = statusCodeNotSuccessful ? statusCode : body.error;
+    if (statusCodeNotSuccessful || responseBodyErrors) {
+      const requestError = Error(
+        `Request Error${
+          responseBodyErrors.message ? ` -> ${responseBodyErrors.message}` : ''
+        }`
+      );
+      requestError.status = statusCodeNotSuccessful
+        ? statusCode
+        : get('extensions.code', responseBodyErrors);
       requestError.detail = get(get('error', body), ERROR_MESSAGES);
       requestError.description = JSON.stringify(body);
       requestError.requestOptions = JSON.stringify(requestOptionsWithoutSensitiveData);

@@ -6,9 +6,9 @@ IronNet Collective Defense Portal helps you detect threats, exchange insights, a
 
 To learn more about IronNet Collective Defense Portal, visit the [official website](https://www.ironnet.com/).
 
+> ***NOTE***: The field `Total Alerts` on the `Indicators` tab might have a higher than 0 result, even though no `Alerts` are returned in the overlay results.  This is expected based on how the IronNet Collective Defense Portal `Alerts` search feature works.
 
 ## IronNet Collective Defense Portal Integration Options
-
 ### Your API Token
 Can be found on the IronNet Collective Defense Portal dashboard -> User Icon in the upper right hand corner -> API Access.
 
@@ -24,21 +24,14 @@ The Categories you wish to exclude from your search results.
 ### Ignore Sub Categories
 The Sub Categories you wish to exclude from your search results.
 
-### Speed Up Search
-If checked, we will only search for an exact string match on entities, which speeds up the search at times up to 3x & can help prevent timeout errors.
-
-This does result in fewer search results.  For Example:
-- ***Unchecked***: foo.com -> gets Alerts, Indicators, & Events for [foo.com, eu-1-foo.com, goodfoo.com ...]
-- ***Checked***: foo.com -> gets Alerts, Indicators, & Events for [foo.com] only).
 
 
 ## Installation Instructions
 
 Installation instructions for integrations are provided on the [PolarityIO GitHub Page](https://polarityio.github.io/).
 
-
 ## Polarity
 
-Polarity is a memory-augmentation platform that improves and accelerates analyst decision making.  For more information about the Polarity platform please see:
+Polarity is a memory-augmentation platform that improves and accelerates analyst decision making. For more information about the Polarity platform please see:
 
 https://polarity.io/

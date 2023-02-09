@@ -1,8 +1,9 @@
 module.exports = {
   name: 'IronNet Collective Defense Portal',
   acronym: 'ICDP',
-  description: 'Connect with IronNet Collective Defense Portal\'s Alert, Event, & Indicator data',
-  entityTypes: ['domain', 'url', 'IPv4', 'IPv6', 'email'],
+  description:
+    "Connect with IronNet Collective Defense Portal's Alert, Event, & Indicator data",
+  entityTypes: ['domain', 'IPv4', 'IPv6'],
   styles: ['./styles/styles.less'],
   defaultColor: 'light-blue',
   block: {
@@ -40,10 +41,10 @@ module.exports = {
       name: 'Minimum Severity',
       description:
         'The Minimum Severity for Alerts, Indicators, and Events to show up in search results.',
-      default: 500,
+      default: 0,
       type: 'number',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'ignoreAnalystSeverity',
@@ -60,8 +61,8 @@ module.exports = {
         { value: 'SEVERITY_WHITELISTED', display: 'Whitelisted' }
       ],
       multiple: true,
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'ignoreCategories',
@@ -80,8 +81,8 @@ module.exports = {
         { value: 'TELEMETRY', display: 'TELEMETRY' }
       ],
       multiple: true,
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'ignoreSubCategories',
@@ -288,19 +289,10 @@ module.exports = {
         { value: 'NOVEL_DCERPC', display: 'NOVEL DCERPC' }
       ],
       multiple: true,
-      userCanEdit: true,
-      adminOnly: false
-    },
-    {
-      key: "speedUpSearch",
-      name: "Speed Up Search",
-      description: "If checked, we will only search for an exact string match on entities, which speeds up the search at times up to 3x & can help prevent timeout errors.\n\nThis does result in fewer search results (e.g. Unchecked: foo.com -> gets Alerts, Indicators, & Events for [foo.com, eu-1-foo.com, goodfoo.com ...];  Checked: foo.com -> gets Alerts, Indicators, & Events for [foo.com] only).",
-      default: true,
-      type: "boolean",
       userCanEdit: false,
-      adminOnly: true,
+      adminOnly: true
     },
-    //Feature Suggestion: Consider adding a days/months back number option.
+    // Feature Suggestion: Consider adding a days/months back number option.
     /** The Query filter for the graphql query looks like this:
      * would likely use moment to create timestamps similar to
      * https://github.com/polarityio/microsoft-sentinel/blob/571d3864243ddc8c724db8ab7339e869b72f9db4/src/queries/utils.js#L23

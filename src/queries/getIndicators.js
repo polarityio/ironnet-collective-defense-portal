@@ -41,7 +41,7 @@ const createIndicatorsQueryBuilder = (entity, options) => (page) => {
       ]
       filter: {
         and: [
-          { indicatorValue: { operator: ${entity.isIP || options.speedUpSearch ? 'Eq' : 'Like'}, value: "${
+          { indicatorValue: { operator: Eq, value: "${
             entity.value
           }" } },
           { maxSeverity: { operator: Gte, value: ${options.minSeverity} } }
