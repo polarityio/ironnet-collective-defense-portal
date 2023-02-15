@@ -3,50 +3,95 @@ polarity.export = PolarityComponent.extend({
   timezone: Ember.computed('Intl', function () {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
   }),
-  selectedChannelName: '',
-  messageValue: '',
-  init () {
-    this.set('selectedChannelName', this.get('details.availableChannelsToMessage')[0]);
+  mitreExpandableTitleStates: {},
+  correlationsExpandableTitleStates: {},
+  communitiesExpandableTitleStates: {},
+  categoriesExpandableTitleStates: {},
+  contextFieldsExpandableTitleStates: {},
+  activeTab: 'alerts',
+  init() {
+    const details = this.get('details');
+
+    this.handleExpandableTitleStartingState(
+      details.alerts,
+      'mitreExpandableTitleStates',
+      'mitreTacticTechniquePair'
+    );
+    this.handleExpandableTitleStartingState(
+      details.indicators,
+      'communitiesExpandableTitleStates',
+      'allCommunities'
+    );
+    this.handleExpandableTitleStartingState(
+      details.indicators,
+      'categoriesExpandableTitleStates',
+      'categories'
+    );
+
+    // Events are only obtainable via Alerts IDs found in the search so Events will never be the starting active tab
+    this.set(
+      'activeTab',
+      details.alerts && details.alerts.length ? 'alerts' : 'indicators'
+    );
     this._super(...arguments);
   },
   actions: {
-    sendMessage: function () {
-      const outerThis = this;
-      outerThis.set('messagingToast', '');
-      outerThis.set('errorMessagingToast', '');
-      outerThis.set('sendingMessage', true);
-      outerThis.get('block').notifyPropertyChange('data');
-
-      outerThis
-        .sendIntegrationMessage({
-          action: 'sendMessageToChannel',
-          data: {
-            content: this.get('messageValue'),
-            channel: this.get('selectedChannelName')
-          }
-        })
-        .then(() => {
-          outerThis.set('messageValue', '');
-          outerThis.set('messagingToast', 'Successfully Sent Message');
-        })
-        .catch((err) => {
-          outerThis.set(
-            'errorMessagingToast',
-            'Failed to Send Message: ' +
-              (err &&
-                (err.detail || err.err || err.message || err.title || err.description)) ||
-              'Unknown Reason'
-          );
-        })
-        .finally(() => {
-          outerThis.set('sendingMessage', false);
-          outerThis.get('block').notifyPropertyChange('data');
-          setTimeout(() => {
-            outerThis.set('messagingToast', '');
-            outerThis.set('errorMessagingToast', '');
-            outerThis.get('block').notifyPropertyChange('data');
-          }, 5000);
-        });
+    changeTab: function (tabName) {
+      this.changeTab(tabName);
+    },
+    toggleMitreExpandableTitle: function (index) {
+      this.toggleExpandableTitle('mitreExpandableTitleStates', index);
+    },
+    toggleCorrelationsExpandableTitle: function (index) {
+      this.toggleExpandableTitle('correlationsExpandableTitleStates', index);
+    },
+    toggleCommunityExpandableTitle: function (index) {
+      this.toggleExpandableTitle('communitiesExpandableTitleStates', index);
+    },
+    toggleCategoryExpandableTitle: function (index) {
+      this.toggleExpandableTitle('categoriesExpandableTitleStates', index);
+    },
+    toggleContextFieldsExpandableTitle: function (index) {
+      this.toggleExpandableTitle('contextFieldsExpandableTitleStates', index);
+    },
+    scrollTo: function(tabName, scrollToPropertyValue) {
+      this.changeTab(tabName);
+      setTimeout(() => {
+        const element = document.getElementById(scrollToPropertyValue);
+        element && element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300)
     }
+  },
+  changeTab: function(tabName) {
+    this.set('activeTab', tabName);
+
+    this.get('block').notifyPropertyChange('data');
+  },
+  toggleExpandableTitle: function (key, index) {
+    this.set(
+      key,
+      Object.assign({}, this.get(key), {
+        [index]: !this.get(key)[index]
+      })
+    );
+
+    this.get('block').notifyPropertyChange('data');
+  },
+  handleExpandableTitleStartingState: function (titleValues, titleStatesKey, fieldKey) {
+    titleValues &&
+      titleValues.length &&
+      titleValues.forEach(
+        (titleValue, index) =>
+          titleValue[fieldKey] &&
+          titleValue[fieldKey].length <= 2 &&
+          this.set(
+            titleStatesKey,
+            Object.assign({}, this.get(titleStatesKey), {
+              [index]: true
+            })
+          )
+      );
+
+    this.get('block').notifyPropertyChange('data');
   }
 });

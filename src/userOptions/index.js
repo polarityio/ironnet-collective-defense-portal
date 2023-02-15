@@ -1,4 +1,4 @@
 const validateOptions = require('./validateOptions');
-const parseUserOptionLists = require('./parseUserOptionLists');
+const parseUserOptions = require('./parseUserOptions');
 
-module.exports = { validateOptions, parseUserOptionLists };
+module.exports = { validateOptions, parseUserOptions };

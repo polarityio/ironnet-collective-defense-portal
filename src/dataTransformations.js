@@ -54,19 +54,18 @@ const groupEntities = (entities) =>
     .omit('unknown')
     .value();
 
-const splitOutIgnoredIps = (_entitiesPartition) => {
-  const { ignoredIPs, entitiesPartition } = _.groupBy(
-    _entitiesPartition,
+const organizeEntities = (entities) => {
+  const isNotIgnoredIp = (isIP, value) => !isIP || (isIP && !IGNORED_IPS.has(value));
+
+  const { searchableEntities, nonSearchableEntities } = _.groupBy(
+    entities,
     ({ isIP, value }) =>
-      !isIP || (isIP && !IGNORED_IPS.has(value)) ? 'entitiesPartition' : 'ignoredIPs'
+      isNotIgnoredIp(isIP, value) ? 'searchableEntities' : 'nonSearchableEntities'
   );
 
   return {
-    entitiesPartition,
-    ignoredIpLookupResults: _.map(ignoredIPs, (entity) => ({
-      entity,
-      data: null
-    }))
+    searchableEntities,
+    nonSearchableEntities
   };
 };
 
@@ -109,13 +108,15 @@ const and =
 // func: (value, key) => [newKey, newValue], obj: { key1:value1, key2:value2 }
 // return { newKey1: newValue1, newKey2: newValue2 }
 const mapObject = curry((func, obj) =>
-  flow(
-    Object.entries,
-    map(([key, value]) => func(value, key)),
-    filter(and(negate(isEmpty), flow(size, eq(2)))),
-    transpose2DArray,
-    ([keys, values]) => zipObject(keys, values)
-  )(obj)
+  obj
+    ? flow(
+        Object.entries,
+        map(([key, value]) => func(value, key)),
+        filter(and(negate(isEmpty), flow(size, eq(2)))),
+        transpose2DArray,
+        ([keys, values]) => zipObject(keys, values)
+      )(obj)
+    : obj
 );
 
 const mapObjectAsync = async (func, obj) => {
@@ -212,17 +213,15 @@ const allCombinations = (
     arrayToCombine
   );
 
-const buildLogger = (logger, ...args) =>
-  logger[
-    ['trace', 'debug', 'info', 'warn', 'error', 'fatal'].includes(last(args))
-      ? last(args)
-      : 'info'
-  ](slice(0, -1, args));
+const buildIgnoreResults = map((entity) => ({
+  entity,
+  data: null
+}));
 
 module.exports = {
   getKeys,
   groupEntities,
-  splitOutIgnoredIps,
+  organizeEntities,
   objectPromiseAll,
   asyncObjectReduce,
   mapObject,
@@ -240,5 +239,5 @@ module.exports = {
   decodeBase64,
   standardizeEntityTypes,
   allCombinations,
-  buildLogger
+  buildIgnoreResults
 };

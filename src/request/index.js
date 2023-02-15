@@ -1,24 +1,13 @@
-const { parallelLimit } = require('async');
-const { map, get } = require('lodash/fp');
+
 const createRequestWithDefaults = require('./createRequestWithDefaults');
+const createRequestsInParallel = require('./createRequestsInParallel');
 
 const requestWithDefaults = createRequestWithDefaults();
 
-const requestsInParallel = async (
-  requestsOptions,
-  responseGetPath = 'body',
-  limit = 10
-) => {
-  const unexecutedRequestFunctions = map(
-    ({ entity, ...requestOptions }) =>
-      async () => {
-        const result = get(responseGetPath, await requestWithDefaults(requestOptions));
-        return entity ? { entity, result } : result;
-      },
-    requestsOptions
-  );
+const requestsInParallel = createRequestsInParallel(requestWithDefaults);
 
-  return await parallelLimit(unexecutedRequestFunctions, limit);
+module.exports = {
+  createRequestWithDefaults,
+  requestWithDefaults,
+  requestsInParallel
 };
-
-module.exports = { createRequestWithDefaults, requestWithDefaults, requestsInParallel };

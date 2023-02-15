@@ -1,5 +1,9 @@
-const searchEntityInTeams = require('./searchEntityInTeams');
+const getAlerts = require('./getAlerts');
+const getIndicators = require('./getIndicators');
+const getEvents = require('./getEvents');
 
 module.exports = {
-  searchEntityInTeams
+  getAlerts,
+  getIndicators,
+  getEvents
 };

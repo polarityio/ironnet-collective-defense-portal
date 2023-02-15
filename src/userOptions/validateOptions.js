@@ -1,18 +1,8 @@
-const { size } = require('lodash/fp');
-
-const { flattenOptions, validateStringOptions } = require('./utils');
-const getSubscriptionsListMessage = require('./getSubscriptionsListMessage');
-const getResourceGroupListMessage = require('./getResourceGroupListMessage');
-const getWorkspaceListMessage = require('./getWorkspaceListMessage');
+const { validateStringOptions } = require('./utils');
 
 const validateOptions = async (options, callback) => {
   const stringOptionsErrorMessages = {
-    clientId: '* Required',
-    tenantId: '* Required',
-    clientSecret: '* Required',
-    //TODO: only check teamname and channel names if allow sending messages user option is true
-    teamName: '* Required',
-    channelNames: '* Required'
+    apiKey: '* Required'
   };
 
   const stringValidationErrors = validateStringOptions(
@@ -20,7 +10,17 @@ const validateOptions = async (options, callback) => {
     options
   );
 
-  const errors = stringValidationErrors
+  const minSeverityError =
+    options.minSeverity.value < 1
+      ? [
+          {
+            key: 'minSeverity',
+            message: 'Must be more than 0'
+          }
+        ]
+      : [];
+
+  const errors = stringValidationErrors.concat(minSeverityError);
 
   callback(null, errors);
 };
