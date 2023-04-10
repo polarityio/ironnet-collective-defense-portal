@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const request = require('postman-request');
-const { get } = require('lodash/fp');
+const { get, size } = require('lodash/fp');
 
 const { ERROR_MESSAGES } = require('../../src/constants');
 const authenticateRequest = require('./authenticateRequest');
@@ -94,6 +94,10 @@ const createRequestWithDefaults = () => {
       !SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES.includes(roundedStatus);
     const responseBodyErrors = get('errors.0', body);
 
+    if (get('extensions.code', responseBodyErrors) === 'NOT_FOUND') {
+      return;
+    }
+
     if (statusCodeNotSuccessful || responseBodyErrors) {
       const requestError = Error(
         `Request Error${
@@ -119,5 +123,26 @@ const createRequestWithDefaults = () => {
 
   return requestDefaultsWithInterceptors;
 };
+
+// body: {
+//   "errors": [
+//     {
+//       "message": "Alert [7d8d8ae3-10ea-4906-8ef9-29a44155fca7] not found",
+//       "locations": [
+//         {
+//           "line": 2,
+//           "column": 3
+//         }
+//       ],
+//       "path": [
+//         "events"
+//       ],
+//       "extensions": {
+//         "code": "NOT_FOUND"
+//       }
+//     }
+//   ],
+//   "data": null
+// }
 
 module.exports = createRequestWithDefaults;
