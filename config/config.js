@@ -291,7 +291,7 @@ module.exports = {
       multiple: true,
       userCanEdit: false,
       adminOnly: true
-    },
+    }
     // Feature Suggestion: Consider adding a days/months back number option.
     /** The Query filter for the graphql query looks like this:
      * would likely use moment to create timestamps similar to

@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const request = require('postman-request');
-const { get } = require('lodash/fp');
+const { get, size } = require('lodash/fp');
 
 const { ERROR_MESSAGES } = require('../../src/constants');
 const authenticateRequest = require('./authenticateRequest');
@@ -93,6 +93,10 @@ const createRequestWithDefaults = () => {
     const statusCodeNotSuccessful =
       !SUCCESSFUL_ROUNDED_REQUEST_STATUS_CODES.includes(roundedStatus);
     const responseBodyErrors = get('errors.0', body);
+
+    if (get('extensions.code', responseBodyErrors) === 'NOT_FOUND') {
+      return;
+    }
 
     if (statusCodeNotSuccessful || responseBodyErrors) {
       const requestError = Error(

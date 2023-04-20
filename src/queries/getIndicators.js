@@ -12,9 +12,7 @@ const getIndicators = async (entities, options) => {
     entities
   );
 
-  const indicatorQueryResults = await requestsInParallel(
-    indicatorRequests
-  );
+  const indicatorQueryResults = await requestsInParallel(indicatorRequests);
 
   const formattedIndicators = formatIndicators(indicatorQueryResults);
 
@@ -22,7 +20,7 @@ const getIndicators = async (entities, options) => {
 };
 /**
  * return [{ entity: {...}, result: [{...}] }];
- * 
+ *
  * Note: Indicators might show a `totalAlertsCount` of >= 1 but not return any results on the Alerts
  */
 
@@ -41,9 +39,7 @@ const createIndicatorsQueryBuilder = (entity, options) => (page) => {
       ]
       filter: {
         and: [
-          { indicatorValue: { operator: Eq, value: "${
-            entity.value
-          }" } },
+          { indicatorValue: { operator: Eq, value: "${entity.value}" } },
           { maxSeverity: { operator: Gte, value: ${options.minSeverity} } }
           ${ignoreSubCategoriesFilter}
         ]
