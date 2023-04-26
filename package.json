@@ -1,6 +1,6 @@
 {
   "name": "ironnet-collective-defense-portal",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "main": "./integration.js",
   "private": true,
   "license": "MIT",
