@@ -1,8 +1,4 @@
-const {
-  getAlerts,
-  getIndicators,
-  getEvents
-} = require('./queries');
+const { getAlerts, getIndicators, getEvents } = require('./queries');
 
 const searchEntities = async (entities, options) => {
   const [alerts, indicators] = await Promise.all([

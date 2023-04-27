@@ -38,8 +38,20 @@ const getResultsForThisEntity = (entity, alerts, indicators, events, options) =>
 
 const createSummaryTags = ({ alerts, indicators, events }, options) =>
   []
-  .concat(size(alerts) ? `Alerts: ${size(alerts)}` : [])
-  .concat(size(indicators) ? `Indicators: ${size(indicators)}` : [])
-  .concat(size(events) ? `Events: ${size(events)}` : []);
+    .concat(size(alerts) ? `Alerts: ${size(alerts)}` : [])
+    .concat(
+      size(indicators) && size(indicators) > 1
+        ? `Indicators: ${size(indicators)}` // more than 1 indicator
+        : formatIndicators(indicators) // 0 or 1 indicator
+    )
+    .concat(size(events) ? `Events: ${size(events)}` : []);
+
+const formatIndicators = (indicators) => {
+  if (size(indicators) === 0) {
+    return [];
+  }
+
+  return `Max Severity: ${indicators[0].maxSeverity}`;
+};
 
 module.exports = assembleLookupResults;
